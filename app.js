@@ -59,7 +59,7 @@ app.get("/bacheca", (req, res) => {
 });
 
 // IMPORTO E REGISTRO IL ROUTER DEI POST
-const postsRouter = require("./routers/posts");
+const postsRouter = require("./routers/postsRouter");
 app.use("/posts", postsRouter);
 
 // metto in ascolto il server sulla porta definita
