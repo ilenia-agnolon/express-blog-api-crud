@@ -1,31 +1,67 @@
-// • INDEX (nome rotta) -> GET (metodo) /posts (endpoint)
-router.get("/", (req, res) => {
-  res.send("Lista dei post");
-}); //GET http://localhost:3000/posts → “Lista dei post”
+//import dei dati nel controller
+const posts = require("../data/posts");
 
-// • SHOW   -> GET /posts/:id
-router.get("/:id", (req, res) => {
-  res.send("Dettaglio del post" + req.params.id);
-}); //GET http://localhost:3000/posts/1 → “Dettaglio del post 1”
+// INDEX -> GET /posts
+function index(req, res) {
+  return res.json(posts);
+}
 
-// • STORE  -> POST /posts
-router.post("/", (req, res) => {
-  res.send("Creazione nuovo post");
-}); //POST http://localhost:3000/posts → “Creazione nuovo post”
+// SHOW -> GET /posts/:id
+function show(req, res) {
+  const id = parseInt(req.params.id); // prendo l'id dall’URL
+  let postTrovato = null; // inizializzo variabile vuota
 
-// • UPDATE -> PUT /posts/:id
-router.put("/:id", (req, res) => {
-  res.send("Modifica integrale del post" + req.params.id);
-}); //PUT http://localhost:3000/posts/1 → “Modifica integrale del post 1”
+  for (let i = 0; i < posts.length; i++) {
+    // ciclo tutti i post
+    if (posts[i].id === id) {
+      // se trovo quello giusto
+      postTrovato = posts[i];
+    }
+  }
 
-// • MODIFY -> PATCH /posts/:id
-router.patch("/:id", (req, res) => {
-  res.send("Modifica parziale del post" + req.params.id);
-}); //PATCH http://localhost:3000/posts/1 → “Modifica parziale del post 1”
+  if (!postTrovato) {
+    // se non lo trovo
+    return res.status(404).json({ message: "Post non trovato" });
+  }
 
-// • DESTROY-> DELETE /posts/:id
-router.delete("/:id", (req, res) => {
-  res.send("Cancellazione del post" + req.params.id);
-}); //DELETE http://localhost:3000/posts/1 → “Cancellazione del post 1”
+  return res.json(postTrovato); // se lo trovo, lo invio in JSON
+}
+
+// STORE -> POST /posts
+function store(req, res) {
+  return res.send("Creazione nuovo post");
+}
+
+// UPDATE -> PUT /posts/:id
+function update(req, res) {
+  return res.send("Modifica integrale del post" + req.params.id);
+}
+
+// MODIFY -> PATCH /posts/:id
+function modify(req, res) {
+  return res.send("Modifica parziale del post" + req.params.id);
+}
+
+// DESTROY -> DELETE /posts/:id
+function destroy(req, res) {
+  const id = parseInt(req.params.id); // prendo l'id dall'URL
+
+  // cerco in che posizione si trova il post
+  const index = posts.findIndex((post) => post.id === id);
+
+  if (index === -1) {
+    // se non lo trova
+    return res.status(404).json({ message: "Post non trovato" });
+  }
+
+  // rimuovo il post dall'array
+  posts.splice(index, 1);
+
+  // stampo in console la lista aggiornata
+  console.log("Lista aggiornata:", posts);
+
+  // invio risposta vuota con stato 204
+  return res.status(204).send();
+}
 
 module.exports = { index, show, store, update, modify, destroy };
