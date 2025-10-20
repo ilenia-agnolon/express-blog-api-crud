@@ -1,37 +1,41 @@
 //import dei dati nel controller
 const posts = require("../data/posts");
 
-// INDEX -> GET /posts
+/******************************************************************************/
+
+// INDEX -> GET /posts -> restituisce la lista aggiornata di posts.js
 function index(req, res) {
-  return res.json(posts);
+  res.json(posts);
 }
 
-// SHOW -> GET /posts/:id
+/******************************************************************************/
+// SHOW -> GET /posts/:id -> dà un singolo post
 function show(req, res) {
-  const id = parseInt(req.params.id); // prendo l'id dall’URL
-  let postTrovato = null; // inizializzo variabile vuota
+  // recuperiamo l'id dall' URL e convertiamolo in un numero
+  const id = parseInt(req.params.id);
 
-  for (let i = 0; i < posts.length; i++) {
-    // ciclo tutti i post
-    if (posts[i].id === id) {
-      // se trovo quello giusto
-      postTrovato = posts[i];
-    }
+  const post = posts.find((post) => post.id === id);
+
+  //controllo
+  if (!post) {
+    //status 404
+    res.status(404);
+
+    return res.json({
+      error: "Not Found",
+      message: "Post non trovato",
+    });
   }
-
-  if (!postTrovato) {
-    // se non lo trovo
-    return res.status(404).json({ message: "Post non trovato" });
-  }
-
-  return res.json(postTrovato); // se lo trovo, lo invio in JSON
+  res.json(post);
 }
 
-// STORE -> POST /posts
+/******************************************************************************/
+
+// STORE -> POST /posts -> crea un nuovo post
 function store(req, res) {
   console.log("Dati ricevuti:", req.body);
   //genero  un nuovo id aggiungendo 1 all'ultimo id esistente
-  const newId = blogPosts[blogPosts.length - 1].id + 1;
+  const newId = posts[posts.length - 1].id + 1;
 
   //creo un nuovo post
   const newPost = {
@@ -43,46 +47,82 @@ function store(req, res) {
   };
 
   //aggiungo il nuovo posto nel blog
-  blogPosts.push(newPost);
+  posts.push(newPost);
 
   // controllo
-  console.log(blogPosts);
+  console.log(posts);
 
   //restituisco lo status corretto e il nuovo post
   res.status(201);
   res.json(newPost);
 }
 
-// UPDATE -> PUT /posts/:id
+/******************************************************************************/
+
+// UPDATE -> PUT /posts/:id -> aggionra un post
 function update(req, res) {
-  return res.send("Modifica integrale del post" + req.params.id);
+  //recupero id
+  const id = parseInt(req.params.id);
+  const post = posts.find((post) => post.id === id);
+  //controllo
+  if (!post) {
+    res.status(404);
+    return res.json({
+      error: "Not Found",
+      message: "Post non trovato",
+    });
+  }
+  //aggiorno il post
+  post.title = req.body.title;
+  post.image = req.body.image;
+  post.content = req.body.content;
+  post.tags = req.body.tags;
+
+  //controllo
+  console.log(posts);
+
+  //restituisco il post aggiornato
+  res.json(post);
 }
 
-// MODIFY -> PATCH /posts/:id
+/******************************************************************************/
+
+// MODIFY -> PATCH /posts/:id -> -> aggionra un post
 function modify(req, res) {
-  return res.send("Modifica parziale del post" + req.params.id);
+  res.send("Modifica parziale post" + req.params.id);
 }
 
-// DESTROY -> DELETE /posts/:id
+/******************************************************************************/
+
+// DESTROY -> DELETE /posts/:id -> elimina un post
 function destroy(req, res) {
-  const id = parseInt(req.params.id); // prendo l'id dall'URL
+  // recupero id
+  const id = parseInt(req.params.id);
 
-  // cerco in che posizione si trova il post
-  const index = posts.findIndex((post) => post.id === id);
+  // cerco il post tramite id
+  const post = posts.find((post) => post.id === id);
 
-  if (index === -1) {
-    // se non lo trova
-    return res.status(404).json({ message: "Post non trovato" });
+  //controllo
+  if (!post) {
+    res.status(404);
+
+    return res.json({
+      status: 404,
+      error: "Not Found",
+      message: "Post non trovato",
+    });
   }
 
-  // rimuovo il post dall'array
-  posts.splice(index, 1);
+  // rimuovo il post dal blog
+  posts.splice(posts.indexOf(post), 1);
 
-  // stampo in console la lista aggiornata
-  console.log("Lista aggiornata:", posts);
+  //controllo con console log in terminale
+  console.log(posts);
 
-  // invio risposta vuota con stato 204
-  return res.status(204).send();
+  // invio la risposta con lo stato che conferma l'eliminazione riuscita
+  res.sendStatus(204);
 }
+
+/******************************************************************************/
 
 module.exports = { index, show, store, update, modify, destroy };

@@ -5,6 +5,7 @@ const port = 3000;
 
 // middleware statici
 app.use(express.static("public"));
+
 // body-parser per JSON
 app.use(express.json());
 
