@@ -1,68 +1,25 @@
-//--> in questo file viene inizializzato il server Express e vengono registrati i router
-
-// importo il framework Express
+// importo Express
 const express = require("express");
-
-// creo un'istanza di Express
 const app = express();
-
-//____________________________________________________
-//LISTA POST DEL BLOG
-const posts = [
-  {
-    title: "Ciambellone della domenica",
-    content: "Soffice, profumato e perfetto per la colazione con il latte.",
-    image: "/img/ciambellone.jpeg",
-    tags: ["colazione", "dolci", "tradizione"],
-  },
-  {
-    title: "Cracker alla barbabietola",
-    content: "Snack croccante e coloratissimo, ottimo con hummus o formaggi.",
-    image: "/img/cracker_barbabietola.jpeg",
-    tags: ["snack", "salati", "barbabietola"],
-  },
-  {
-    title: "Pane fritto dolce",
-    content: "Ricetta povera ma irresistibile, zucchero e cannella a pioggia.",
-    image: "/img/pane_fritto_dolce.jpeg",
-    tags: ["dolci", "frittura", "veloci"],
-  },
-  {
-    title: "Pasta alla barbabietola",
-    content: "Cremosa e vivace, con ricotta e noci per un tocco crunchy.",
-    image: "/img/pasta_barbabietola.jpeg",
-    tags: ["primi", "barbabietola", "cremoso"],
-  },
-  {
-    title: "Torta paesana",
-    content: "Dolce lombardo al pane raffermo, cacao e pinoli. Comfort food.",
-    image: "/img/torta_paesana.jpeg",
-    tags: ["dolci", "tradizione", "riciclo"],
-  },
-];
-//____________________________________________________
-
-// imposto una porta di riferimento
 const port = 3000;
 
-// uso il middleware static per servire i file statici
+// middleware statici
 app.use(express.static("public"));
+// body-parser per JSON
+app.use(express.json());
 
-// imposto la rotta di index
+// importo il router dei post
+const router = require("./routers/postsRouter");
+
+// rotta di index
 app.get("/", (req, res) => {
   res.send("Server del mio blog");
 });
 
-//rotta /bacheca
-app.get("/bacheca", (req, res) => {
-  res.json(posts);
-});
+// registro il router con prefisso /posts
+app.use("/posts", router);
 
-// IMPORTO E REGISTRO IL ROUTER DEI POST
-const postsRouter = require("./routers/postsRouter");
-app.use("/posts", postsRouter);
-
-// metto in ascolto il server sulla porta definita
+// avvio server
 app.listen(port, () => {
   console.log(`✅ Server avviato sulla porta ${port}`);
 });

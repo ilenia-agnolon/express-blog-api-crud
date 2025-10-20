@@ -29,6 +29,7 @@ function show(req, res) {
 
 // STORE -> POST /posts
 function store(req, res) {
+  console.log("Dati ricevuti:", req.body);
   return res.send("Creazione nuovo post");
 }
 
