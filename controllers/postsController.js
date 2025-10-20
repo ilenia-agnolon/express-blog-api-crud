@@ -30,7 +30,27 @@ function show(req, res) {
 // STORE -> POST /posts
 function store(req, res) {
   console.log("Dati ricevuti:", req.body);
-  return res.send("Creazione nuovo post");
+  //genero  un nuovo id aggiungendo 1 all'ultimo id esistente
+  const newId = blogPosts[blogPosts.length - 1].id + 1;
+
+  //creo un nuovo post
+  const newPost = {
+    id: newId,
+    title: req.body.title,
+    image: req.body.image,
+    content: req.body.content,
+    tags: req.body.tags,
+  };
+
+  //aggiungo il nuovo posto nel blog
+  blogPosts.push(newPost);
+
+  // controllo
+  console.log(blogPosts);
+
+  //restituisco lo status corretto e il nuovo post
+  res.status(201);
+  res.json(newPost);
 }
 
 // UPDATE -> PUT /posts/:id
