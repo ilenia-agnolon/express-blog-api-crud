@@ -11,12 +11,12 @@ function index(req, res) {
 /******************************************************************************/
 // SHOW -> GET /posts/:id -> dà un singolo post
 function show(req, res) {
-  // recuperiamo l'id dall' URL e convertiamolo in un numero
+  //prendo il valore del parametro "id" dall'URL (es. /posts/3) e lo converto in numero intero
   const id = parseInt(req.params.id);
 
+  //cerco nell'array "posts" il primo oggetto che ha un id uguale a quello passato nell'URL
   const post = posts.find((post) => post.id === id);
 
-  //controllo
   if (!post) {
     //status 404
     res.status(404);
@@ -27,6 +27,10 @@ function show(req, res) {
     });
   }
   res.json(post);
+
+  // if (!post) {
+  //   return res.status(404).json({ messaggio: "non trovato" });
+  // }
 }
 
 /******************************************************************************/
@@ -64,7 +68,8 @@ function update(req, res) {
   //recupero id
   const id = parseInt(req.params.id);
   const post = posts.find((post) => post.id === id);
-  //controllo
+
+  //404
   if (!post) {
     res.status(404);
     return res.json({
@@ -72,6 +77,7 @@ function update(req, res) {
       message: "Post non trovato",
     });
   }
+
   //aggiorno il post
   post.title = req.body.title;
   post.image = req.body.image;
@@ -89,7 +95,36 @@ function update(req, res) {
 
 // MODIFY -> PATCH /posts/:id -> -> aggionra un post
 function modify(req, res) {
-  res.send("Modifica parziale post" + req.params.id);
+  const id = parseInt(req.params.id);
+
+  const post = posts.find((post) => post.id === id);
+
+  //controllo
+  if (!post) {
+    res.status(404);
+
+    return res.json({
+      error: "Not Found",
+      message: "Post non trovato",
+    });
+  }
+
+  // aggiorno il post (verranno aggiornati solo i campi inviati nel body JSON)
+  req.body.title ? (post.title = req.body.title) : (post.title = post.title); // --> se nel body (req.body) è presente un valore title, aggiorna post.title con quel valore. Altrimenti lascia il valore precedente com’è
+
+  req.body.image ? (post.image = req.body.image) : (post.image = post.image);
+
+  req.body.content
+    ? (post.content = req.body.content)
+    : (post.content = post.content);
+
+  req.body.tags ? (post.tags = req.body.tags) : (post.tags = post.tags);
+
+  // controllo
+  console.log(posts);
+
+  // restituisco il post aggiornato
+  res.json(post);
 }
 
 /******************************************************************************/
@@ -102,7 +137,7 @@ function destroy(req, res) {
   // cerco il post tramite id
   const post = posts.find((post) => post.id === id);
 
-  //controllo
+  //404
   if (!post) {
     res.status(404);
 

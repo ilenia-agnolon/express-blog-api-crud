@@ -4,7 +4,7 @@ const router = express.Router();
 //import del controller
 const postsController = require("../controllers/postsController");
 
-//rotte CRUD collegate alle funzioni del controller
+//rotte CRUD (Create, Read, Update, Delete) collegate alle funzioni del controller
 router.get("/", postsController.index);
 router.get("/:id", postsController.show);
 router.post("/", postsController.store);
