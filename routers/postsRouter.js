@@ -1,8 +1,6 @@
 const express = require("express");
 const router = express.Router();
-
-//import del controller
-const postsController = require("../controllers/postsController");
+const postsController = require("../controllers/postsController"); //import del controller
 
 //rotte CRUD (Create, Read, Update, Delete) collegate alle funzioni del controller
 router.get("/", postsController.index);

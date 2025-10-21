@@ -5,11 +5,14 @@ const posts = require("../data/posts");
 
 // INDEX -> GET /posts -> restituisce la lista aggiornata di posts.js
 function index(req, res) {
+  //errore 500
+  pluto500.get();
+
   res.json(posts);
 }
 
 /******************************************************************************/
-// SHOW -> GET /posts/:id -> dà un singolo post
+// SHOW -> GET /posts/:id -> dà/fornisce un singolo post
 function show(req, res) {
   //prendo il valore del parametro "id" dall'URL (es. /posts/3) e lo converto in numero intero
   const id = parseInt(req.params.id);
@@ -93,7 +96,7 @@ function update(req, res) {
 
 /******************************************************************************/
 
-// MODIFY -> PATCH /posts/:id -> -> aggionra un post
+// MODIFY -> PATCH /posts/:id -> aggionra un post
 function modify(req, res) {
   const id = parseInt(req.params.id);
 
